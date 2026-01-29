@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "name": "NCC",
+    "fullName": "National Cadet Corps",
+    "role": "Emergency volunteer support & crowd management",
+    "location": "Rajshahi",
+    "website": "https://example.com/ncc",
+    "logo": "../public/logos/bncc.png",
+    "accent": "badge-primary"
+  },
+  {
+    "id": 2,
+    "name": "NSS",
+    "fullName": "National Service Scheme",
+    "role": "Community blood donation drives & awareness",
+    "location": "Rajshahi",
+    "website": "https://example.com/nss",
+    "logo": "../public/logos/gov.png",
+    "accent": "badge-secondary"
+  },
+  {
+    "id": 3,
+    "name": "YMCA",
+    "fullName": "Young Men's Christian Association",
+    "role": "Health camp support & emergency coordination",
+    "location": "Dhaka",
+    "website": "https://example.com/ymca",
+    "logo": "../public/logos/ymca.png",
+    "accent": "badge-accent"
+  },
+  {
+    "id": 4,
+    "name": "Red Crescent",
+    "fullName": "Bangladesh Red Crescent Society",
+    "role": "First-aid support & disaster response assistance",
+    "location": "Bangladesh",
+    "website": "https://example.com/red-crescent",
+    "logo": "../public/logos/redc.png",
+    "accent": "badge-error"
+  },
+
+  {
+    "id": 5,
+    "name": "Red Crescent",
+    "fullName": "Bangladesh Red Crescent Society",
+    "role": "First-aid support & disaster response assistance",
+    "location": "Bangladesh",
+    "website": "https://example.com/red-crescent",
+    "logo": "../public/logos/redc.png",
+    "accent": "badge-error"
+  }
+]
