@@ -109,21 +109,22 @@ export default function AsDonor() {
     try {
       setSubmitting(true);
 
-      // ✅ 1) Create Firebase user (NOTE: this also logs in automatically)
+      // ✅ 1) Create Firebase user
       const userCred = await createUser(form.email.trim(), form.password);
 
-      // ✅ 2) Update profile name (optional)
+      // ✅ 2) Update profile name
       const fullName = `${form.firstName.trim()} ${form.lastName.trim()}`;
       await updateUserProfile(fullName, "");
 
-      // ✅ 3) Get token
-      const token = await userCred.user.getIdToken();
+      // ✅ 3) Get token (force refresh for production stability)
+      const token = await userCred.user.getIdToken(true);
 
       // ✅ 4) Save donor data to MongoDB
       const donorPayload = {
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
         phone: form.phone.trim(),
+        email: form.email.trim(), // ✅ email add করলাম (ডিবিতে রাখলে সুবিধা)
         address: form.address.trim(),
         age: form.age ? Number(form.age) : null,
         bloodGroup: form.bloodGroup,
@@ -134,7 +135,10 @@ export default function AsDonor() {
         lastDonationYear: form.lastDonationYear,
       };
 
-      const res = await fetch("http://localhost:5000/api/donors/me", {
+      // 🔥 IMPORTANT: localhost না, env থেকে API URL
+      const API = import.meta.env.VITE_API_URL;
+
+      const res = await fetch(`${API}/api/donors/me`, {
         method: "PUT",
         headers: {
           "content-type": "application/json",
@@ -143,24 +147,25 @@ export default function AsDonor() {
         body: JSON.stringify(donorPayload),
       });
 
-      if (!res.ok) throw new Error("MongoDB save failed");
+      // error details দেখার জন্য:
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.message || "MongoDB save failed");
+      }
 
       setToast({
         type: "success",
         message: "Donor registered successfully ✅",
       });
 
-      // ✅ FIX 1: Register হলে Firebase auto login হয়ে যায়
-      // তাই Navbar state ঠিক রাখতে আগে logout করে তারপর login page এ পাঠাচ্ছি
+      // ✅ 5) তুমি পরে login করবে — তাই logout করে login page
       setTimeout(async () => {
         try {
           await logout();
-        } catch (e) {
-          console.log("Logout after register failed:", e);
         } finally {
-          navigate("/login");
+          navigate("/login", { state: { email: form.email.trim() } });
         }
-      }, 1200);
+      }, 800);
     } catch (err) {
       console.error(err);
       setToast({ type: "error", message: err.message || "Register failed" });
