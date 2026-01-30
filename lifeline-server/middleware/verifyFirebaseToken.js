@@ -1,6 +1,9 @@
 const admin = require("firebase-admin");
 require("dotenv").config();
 
+// Locally run korar somoy ai if part ta comment kore server run korbo.
+// Render a deploy korar somoy abar ai part ta lagbe token verify korar jonno
+
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({

@@ -1,10 +1,11 @@
 import React from "react";
 import blood1 from "../../assets/blood1.jpg";
+import { Link } from "react-router";
 
 const Banner = () => {
   return (
     <div>
-      <div className=" border hero bg-base-200">
+      <div className=" hero bg-base-200">
         <div className="hero-content flex-col lg:flex-row">
           <img src={blood1} />
           <div>
@@ -17,7 +18,9 @@ const Banner = () => {
               in need. Your small act today can become someone’s biggest hope
               tomorrow.
             </p>
-            <button className="btn btn-error ">Get Started</button>
+            {/* <Link to="/feedback">
+              <button className="btn btn-error ">Get Started</button>
+            </Link> */}
           </div>
         </div>
       </div>

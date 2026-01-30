@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from "react";
+import { Link } from "react-router";
 
 export default function HowToGetBlood() {
   const steps = useMemo(
     () => [
       {
         id: 1,
-        title: "Create Emergency Request",
-        desc: "Select blood group, units, hospital and urgency. Submit in seconds.",
+        title: "Register as Donor",
+        desc: "Create an account and add your information like blood group, location, and last donation etc.",
+        to: "/regasdonor",
+        cta: "Register",
         tone: "from-rose-500 to-pink-500",
         soft: "bg-rose-50",
         icon: (
@@ -23,8 +26,10 @@ export default function HowToGetBlood() {
       },
       {
         id: 2,
-        title: "Get Matched Donors Nearby",
-        desc: "We match available donors based on location and last donation time.",
+        title: "Find Blood Fast",
+        desc: "Search donors by blood group and district/division to reach the right people quickly.",
+        to: "/findblood",
+        cta: "Find Blood",
         tone: "from-fuchsia-500 to-rose-500",
         soft: "bg-fuchsia-50",
         icon: (
@@ -42,8 +47,10 @@ export default function HowToGetBlood() {
       },
       {
         id: 3,
-        title: "Confirm & Receive Blood",
-        desc: "Donor accepts → contact → donation completes → records updated.",
+        title: "Connect & Save Lives",
+        desc: "Contact donors, confirm availability, and complete donation with care and safety.",
+        to: "/feedback",
+        cta: "Give your Feedback",
         tone: "from-pink-500 to-red-500",
         soft: "bg-pink-50",
         icon: (
@@ -141,7 +148,7 @@ export default function HowToGetBlood() {
 
           {/* Details panel (colorful) */}
           <div className="mt-15">
-            <div className="relative mx-auto max-w-3xl rounded-xl border-2 border-rose-800 bg-white/70 p-5 md:p-6 shadow-sm backdrop-blur">
+            <div className="relative mx-auto max-w-3xl rounded-xl border-2 border-rose-600 bg-white/70 p-5 md:p-6 shadow-sm backdrop-blur">
               <div
                 className={[
                   "absolute -inset-[1px] rounded-3xl opacity-50 blur",
@@ -163,6 +170,14 @@ export default function HowToGetBlood() {
                     <p className="mt-2 text-sm text-base-content/70">
                       {activeStep.desc}
                     </p>
+                    <div className="mt-4">
+                      <Link
+                        to={activeStep.to}
+                        className="btn btn-outline btn-sm rounded-full"
+                      >
+                        {activeStep.cta} →
+                      </Link>
+                    </div>
                   </div>
 
                   <div className="hidden md:block">

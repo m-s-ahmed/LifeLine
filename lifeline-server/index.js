@@ -6,12 +6,16 @@ const connectDB = require("./config/db");
 const donorRoutes = require("./routes/donor.routes");
 const donationRoutes = require("./routes/donation.routes");
 const findRoutes = require("./routes/find.routes");
+const feedbackRoutes = require("./routes/feedback.routes");
+const statsRoutes = require("./routes/stats.routes");
 
 const app = express();
 
+
+
 //app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
-// deploy ar time change koresi 
+// deploy ar time change koresi
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5173",
@@ -34,6 +38,9 @@ app.use("/api/donors", donorRoutes);
 app.use("/api/donations", donationRoutes);
 
 app.use("/api/find", findRoutes);
+
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/stats", statsRoutes);
 
 const port = process.env.PORT || 5000;
 

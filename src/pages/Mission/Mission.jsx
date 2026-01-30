@@ -8,10 +8,7 @@ const Mission = () => {
           <div className="text-center">
             <h1 className="text-4xl font-bold">Our Mission</h1>
             <p className="py-6">
-              Our mission is to save lives by making blood donation and blood
-              access fast, safe, and reliable. We aim to connect voluntary blood
-              donors with patients in need through a trusted digital platform,
-              ensuring that no life is lost due to the unavailability of blood.
+              To make blood discovery and emergency response easier, faster, and more reliable—so no one loses a life due to late support.
             </p>
           </div>
         </div>

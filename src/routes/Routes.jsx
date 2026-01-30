@@ -12,6 +12,7 @@ import PrivateRoute from "../providers/PrivateRoute";
 import Login from "../pages/Login/Login";
 import MyProfile from "../pages/MyProfile/MyProfile";
 import EditProfile from "../pages/EditProfile/EditProfile";
+import Feedback from "../pages/Feedback/Feedback";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
             <EditProfile></EditProfile>
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/feedback",
+        Component: Feedback,
       },
       {
         path: "/random",

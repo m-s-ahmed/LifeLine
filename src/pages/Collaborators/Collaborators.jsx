@@ -74,12 +74,12 @@ export default function Collaborators() {
   }
 
   return (
-    <section className="w-full mt-20  shadow-sm">
+    <section className="w-full mt-10  shadow-sm">
       <div>
         {/* Our Collaborators */}
         <div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold md:text-4xl">
+            <h1 className=" p-5 text-4xl font-bold md:text-4xl">
               Our Collaborators
             </h1>
             <p className="mt-1 text-sm text-base-content/60">
