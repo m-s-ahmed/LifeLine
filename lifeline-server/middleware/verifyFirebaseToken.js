@@ -4,15 +4,15 @@ require("dotenv").config();
 // Locally run korar somoy ai if part ta comment kore server run korbo.
 // Render a deploy korar somoy abar ai part ta lagbe token verify korar jonno
 
-// if (!admin.apps.length) {
-//   admin.initializeApp({
-//     credential: admin.credential.cert({
-//       projectId: process.env.FIREBASE_PROJECT_ID,
-//       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-//       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-//     }),
-//   });
-// }
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    }),
+  });
+}
 
 module.exports = async function verifyFirebaseToken(req, res, next) {
   try {
