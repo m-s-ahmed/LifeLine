@@ -29,11 +29,9 @@ export default function NotificationDetails() {
         setErr("");
         setLoading(true);
 
-        // ✅ get single notification
         const res = await axiosSecure.get(`/api/notifications/${id}`);
         setN(res.data);
 
-        // ✅ mark read (idempotent)
         await axiosSecure.patch(`/api/notifications/${id}/read`);
       } catch (e) {
         setErr(e?.response?.data?.message || "Failed to load notification");
@@ -92,27 +90,39 @@ export default function NotificationDetails() {
           {n.requestId && (
             <div className="mt-5 rounded-2xl border border-base-200 bg-base-200/40 p-4">
               <p className="font-bold">Request Summary</p>
+
               <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                 <div>
                   <span className="font-semibold">Blood:</span>{" "}
                   {n.requestId.bloodGroup || "-"}
                 </div>
+
                 <div>
                   <span className="font-semibold">Units:</span>{" "}
                   {n.requestId.units || "-"}
                 </div>
+
+                {/* ✅ NEW: number field */}
+                <div className="md:col-span-2">
+                  <span className="font-semibold">Number:</span>{" "}
+                  {n.requestId.number || "-"}
+                </div>
+
                 <div>
                   <span className="font-semibold">District:</span>{" "}
                   {n.requestId.district || "-"}
                 </div>
+
                 <div>
                   <span className="font-semibold">Division:</span>{" "}
                   {n.requestId.division || "-"}
                 </div>
+
                 <div className="md:col-span-2">
                   <span className="font-semibold">Hospital:</span>{" "}
                   {n.requestId.hospitalName || "-"}
                 </div>
+
                 <div className="md:col-span-2">
                   <span className="font-semibold">Needed:</span>{" "}
                   {n.requestId.neededDate || "-"}{" "}
@@ -120,7 +130,6 @@ export default function NotificationDetails() {
                 </div>
               </div>
 
-              {/* ✅ optional CTA */}
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link to="/findblood" className="btn btn-sm btn-primary">
                   Find Donors

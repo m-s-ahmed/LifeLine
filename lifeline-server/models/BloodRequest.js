@@ -14,6 +14,7 @@ const bloodRequestSchema = new mongoose.Schema(
     district: { type: String, default: "" },
     hospitalName: { type: String, default: "" },
     hospitalAddress: { type: String, default: "" },
+    number: { type: String, default: "" },
     patientName: { type: String, default: "" },
     relation: { type: String, default: "" },
     units: { type: Number, default: 1 },

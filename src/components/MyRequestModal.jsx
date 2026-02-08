@@ -122,6 +122,10 @@ export default function MyRequestsModal({ open, onClose }) {
                           label="Hospital Address"
                           value={r.hospitalAddress}
                         />
+
+                        {/* ✅ NEW: number field */}
+                        <Info label="Number" value={r.number} />
+
                         <Info label="Patient" value={r.patientName} />
                         <Info label="Relation" value={r.relation} />
                         <Info label="Time" value={r.neededTime} />
