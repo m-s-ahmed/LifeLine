@@ -36,6 +36,8 @@ router.get("/donors", async (req, res) => {
       // ✅ projection (privacy)
       {
         $project: {
+          _id: 1,
+          uid: 1,
           firstName: 1,
           lastName: 1,
           phone: 1,
