@@ -1,5 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { axiosSecure } from "../../api/axiosSecure";
+import { AuthContext } from "../../providers/AuthProvider";
+
+import AddRequestModal from "../../components/AddRequestModal";
+import MyRequestsModal from "../../components/MyRequestModal";
+import SendRequestModal from "../../components/SendRequestModal";
 
 // ✅ Division list (BD)
 const DIVISIONS = [
@@ -13,7 +18,7 @@ const DIVISIONS = [
   "Mymensingh",
 ];
 
-// ✅ Districts (simple starter set — পরে চাইলে full list add করবে)
+// ✅ Districts (starter set)
 const DISTRICTS_BY_DIVISION = {
   Dhaka: ["Dhaka", "Gazipur", "Narayanganj", "Tangail", "Manikganj"],
   Chattogram: ["Chattogram", "Cox's Bazar", "Cumilla", "Noakhali", "Feni"],
@@ -27,7 +32,7 @@ const DISTRICTS_BY_DIVISION = {
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 
-// Month mapping (তোমার DB তে "Jan" টাইপ আছে)
+// Month mapping (DB: "Jan" etc.)
 const MONTH_INDEX = {
   Jan: 0,
   Feb: 1,
@@ -44,14 +49,36 @@ const MONTH_INDEX = {
 };
 
 export default function FindBlood() {
+  // ✅ hooks must be inside component
+  const { user } = useContext(AuthContext);
+
+  // ✅ modal state
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openView, setOpenView] = useState(false);
+  const [openSend, setOpenSend] = useState(false);
+  const [selectedDonor, setSelectedDonor] = useState(null);
+
+  // filters
   const [bloodGroup, setBloodGroup] = useState("");
   const [division, setDivision] = useState("");
   const [district, setDistrict] = useState("");
   const [availableOnly, setAvailableOnly] = useState(false);
 
+  // result state
   const [loading, setLoading] = useState(false);
   const [donors, setDonors] = useState([]);
   const [msg, setMsg] = useState("");
+
+  // ✅ current user info for modal prefilling
+  const me = useMemo(
+    () => ({
+      name: user?.displayName || "",
+      email: user?.email || "",
+      phone: "",
+      uid: user?.uid || "",
+    }),
+    [user],
+  );
 
   const districtOptions = useMemo(
     () => (division ? DISTRICTS_BY_DIVISION[division] || [] : []),
@@ -61,14 +88,12 @@ export default function FindBlood() {
   const handleDivisionChange = (e) => {
     const v = e.target.value;
     setDivision(v);
-    setDistrict(""); // ✅ division change হলে district reset
+    setDistrict("");
   };
 
   const buildLastDonationDate = (d) => {
-    // Prefer explicit ISO date if you ever add later:
     if (d.lastDonationDate) return d.lastDonationDate;
 
-    // Build from month/year (current DB structure)
     const m = d.lastDonationMonth;
     const y = d.lastDonationYear;
 
@@ -77,7 +102,6 @@ export default function FindBlood() {
     const yi = Number(y);
     if (mi === undefined || Number.isNaN(yi)) return null;
 
-    // Assume 1st day of month
     const dt = new Date(yi, mi, 1);
     return dt.toISOString();
   };
@@ -92,7 +116,6 @@ export default function FindBlood() {
     });
   };
 
-  // Availability rule: last donation >= 90 days => available
   const getAvailability = (lastDonationISO) => {
     if (!lastDonationISO) return { label: "Unknown", cls: "badge-ghost" };
 
@@ -106,7 +129,6 @@ export default function FindBlood() {
   };
 
   const handleSearch = async () => {
-    // ✅ easy validation
     if (!bloodGroup || !division || !district) {
       setMsg("Blood group, Division, District select করো");
       setDonors([]);
@@ -126,8 +148,8 @@ export default function FindBlood() {
       const res = await axiosSecure.get(
         `/api/find/donors?${params.toString()}`,
       );
-
       const list = res.data || [];
+
       setDonors(list);
       if (!list.length) setMsg("No donors found");
     } catch (e) {
@@ -156,14 +178,15 @@ export default function FindBlood() {
           <div>
             <h1 className="text-3xl md:text-4xl font-extrabold">Find Blood</h1>
             <p className="text-sm text-base-content/60 mt-1">
-              Filter করে donors list দেখো — call/copy করো দ্রুত।
+              Filter করে donors list দেখো — call/copy/send request করো দ্রুত।
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button className="btn btn-ghost" onClick={handleReset}>
               Reset
             </button>
+
             <button
               className="btn btn-neutral"
               onClick={handleSearch}
@@ -177,6 +200,21 @@ export default function FindBlood() {
               ) : (
                 "Search"
               )}
+            </button>
+
+            {/* ✅ request actions */}
+            <button
+              className="btn btn-outline"
+              onClick={() => setOpenAdd(true)}
+            >
+              Add Request
+            </button>
+
+            <button
+              className="btn btn-outline"
+              onClick={() => setOpenView(true)}
+            >
+              View Request
             </button>
           </div>
         </div>
@@ -342,6 +380,20 @@ export default function FindBlood() {
                       >
                         Copy
                       </button>
+
+                      <button
+                        className="btn btn-sm btn-primary"
+                        onClick={() => {
+                          setSelectedDonor({ uid: d.uid, name });
+                          setOpenSend(true);
+                        }}
+                        disabled={!d.uid}
+                        title={
+                          !d.uid ? "Donor uid missing in API response" : ""
+                        }
+                      >
+                        Send Request
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -356,6 +408,33 @@ export default function FindBlood() {
           )}
         </div>
       </div>
+
+      {/* ✅ MODALS MUST BE RENDERED HERE */}
+      <AddRequestModal
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+        me={me}
+        onCreated={() => {
+          // add request create হলে optionally my requests refresh করতে চাইলে:
+          // setOpenView(true);
+        }}
+      />
+
+      <MyRequestsModal
+        open={openView}
+        onClose={() => setOpenView(false)}
+        me={me}
+      />
+
+      <SendRequestModal
+        open={openSend}
+        onClose={() => setOpenSend(false)}
+        donor={selectedDonor} // { uid, name }
+        me={me}
+        onSent={() => {
+          setOpenSend(false);
+        }}
+      />
     </section>
   );
 }

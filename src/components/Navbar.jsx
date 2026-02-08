@@ -1,16 +1,18 @@
 import React, { useContext } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider";
+import NotificationsDropdown from "../components/NotificationDropdown";
 
 const getInitials = (text = "") => {
   const s = text.trim();
-  if (!s) return "U";
+  if (!s) return "U"; //unknown user
   const parts = s.split(" ").filter(Boolean);
   if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
   return s.slice(0, 2).toUpperCase();
 };
 
 const Navbar = () => {
+  // Object Destructuring
   const { user, logout } = useContext(AuthContext);
 
   const navLinks = (
@@ -120,13 +122,15 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">{navLinks}</ul>
       </div>
 
-      <div className="navbar-end mr-5 gap-2">
+      <div className="navbar-end mr-5 gap-10">
         {!user ? (
           <Link to="/login" className="btn btn-outline px-10">
             Login
           </Link>
         ) : (
           <>
+            <NotificationsDropdown />
+
             <Link to="/my-profile" className="btn btn-ghost btn-circle">
               <div className="avatar placeholder">
                 <div className="w-10 rounded-full bg-neutral text-neutral-content">
