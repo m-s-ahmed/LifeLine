@@ -73,9 +73,9 @@ const router = createBrowserRouter([
         Component: random,
       },
       {
-        path:"/notifications/:id",
-        element:<NotificationDetails></NotificationDetails>
-      }
+        path: "/notifications/:id",
+        element: <NotificationDetails></NotificationDetails>,
+      },
       {
         path: "/*",
         element: <NotFound></NotFound>,
