@@ -49,7 +49,6 @@ const MONTH_INDEX = {
 };
 
 export default function FindBlood() {
-  // ✅ hooks must be inside component
   const { user } = useContext(AuthContext);
 
   // ✅ modal state
@@ -202,7 +201,6 @@ export default function FindBlood() {
               )}
             </button>
 
-            {/* ✅ request actions */}
             <button
               className="btn btn-outline"
               onClick={() => setOpenAdd(true)}
@@ -321,6 +319,15 @@ export default function FindBlood() {
             const lastDonationISO = buildLastDonationDate(d);
             const availability = getAvailability(lastDonationISO);
 
+            // ✅ IMPORTANT: fallback uid mapping (Send Request এর জন্য)
+            const donorUid =
+              d.uid ||
+              d.firebaseUid ||
+              d.userUid ||
+              d.userId ||
+              d.authUid ||
+              "";
+
             return (
               <div
                 key={d._id}
@@ -356,6 +363,13 @@ export default function FindBlood() {
                         <span className="font-semibold">Phone:</span>{" "}
                         <span className="font-mono">{d.phone || "-"}</span>
                       </p>
+
+                      {!donorUid && (
+                        <p className="mt-2 text-xs text-error">
+                          ⚠️ Donor UID missing from API response (send request
+                          disabled)
+                        </p>
+                      )}
                     </div>
 
                     {/* Right actions */}
@@ -384,12 +398,19 @@ export default function FindBlood() {
                       <button
                         className="btn btn-sm btn-primary"
                         onClick={() => {
-                          setSelectedDonor({ uid: d.uid, name });
+                          setSelectedDonor({
+                            uid: donorUid,
+                            name,
+                            phone: d.phone || "",
+                            bloodGroup: d.bloodGroup || "",
+                            district: d.district || "",
+                            division: d.division || "",
+                          });
                           setOpenSend(true);
                         }}
-                        disabled={!d.uid}
+                        disabled={!donorUid}
                         title={
-                          !d.uid ? "Donor uid missing in API response" : ""
+                          !donorUid ? "Donor uid missing in API response" : ""
                         }
                       >
                         Send Request
@@ -409,15 +430,12 @@ export default function FindBlood() {
         </div>
       </div>
 
-      {/* ✅ MODALS MUST BE RENDERED HERE */}
+      {/* ✅ MODALS */}
       <AddRequestModal
         open={openAdd}
         onClose={() => setOpenAdd(false)}
         me={me}
-        onCreated={() => {
-          // add request create হলে optionally my requests refresh করতে চাইলে:
-          // setOpenView(true);
-        }}
+        onCreated={() => {}}
       />
 
       <MyRequestsModal
@@ -429,11 +447,9 @@ export default function FindBlood() {
       <SendRequestModal
         open={openSend}
         onClose={() => setOpenSend(false)}
-        donor={selectedDonor} // { uid, name }
+        donor={selectedDonor}
         me={me}
-        onSent={() => {
-          setOpenSend(false);
-        }}
+        onSent={() => setOpenSend(false)}
       />
     </section>
   );
