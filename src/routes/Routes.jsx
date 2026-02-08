@@ -13,6 +13,7 @@ import Login from "../pages/Login/Login";
 import MyProfile from "../pages/MyProfile/MyProfile";
 import EditProfile from "../pages/EditProfile/EditProfile";
 import Feedback from "../pages/Feedback/Feedback";
+import NotificationDetails from "../pages/NotificationDetails";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
         path: "/random",
         Component: random,
       },
+      {
+        path:"/notifications/:id",
+        element:<NotificationDetails></NotificationDetails>
+      }
       {
         path: "/*",
         element: <NotFound></NotFound>,

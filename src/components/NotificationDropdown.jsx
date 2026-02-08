@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { axiosSecure } from "../api/axiosSecure";
+import { useNavigate } from "react-router-dom";
 
 function timeAgo(dateStr) {
   const d = new Date(dateStr);
@@ -23,18 +24,19 @@ export default function NotificationsDropdown() {
   const [err, setErr] = useState("");
 
   const boxRef = useRef(null);
+  const navigate = useNavigate();
 
   const unreadLocal = useMemo(
     () => items.filter((n) => !n.isRead).length,
     [items],
   );
 
-  // keep badge in sync (server count or local list)
+  // ✅ keep badge synced with current list (when dropdown is open)
   useEffect(() => {
     if (items.length) setUnread(unreadLocal);
   }, [unreadLocal, items.length]);
 
-  // close on outside click
+  // ✅ close on outside click
   useEffect(() => {
     const onDoc = (e) => {
       if (!boxRef.current) return;
@@ -44,7 +46,7 @@ export default function NotificationsDropdown() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  // fetch count periodically (optional)
+  // ✅ poll unread count (badge will show without opening dropdown)
   useEffect(() => {
     let timer = null;
 
@@ -58,7 +60,7 @@ export default function NotificationsDropdown() {
     };
 
     loadCount();
-    timer = setInterval(loadCount, 20000); // 20s
+    timer = setInterval(loadCount, 15000); // 15s (smooth)
     return () => timer && clearInterval(timer);
   }, []);
 
@@ -66,9 +68,12 @@ export default function NotificationsDropdown() {
     try {
       setErr("");
       setLoading(true);
+
       const res = await axiosSecure.get("/api/notifications/me?limit=30");
-      setItems(res.data || []);
-      setUnread((res.data || []).filter((n) => !n.isRead).length);
+      const list = res.data || [];
+
+      setItems(list);
+      setUnread(list.filter((n) => !n.isRead).length);
     } catch (e) {
       setErr("Failed to load notifications");
     } finally {
@@ -82,6 +87,7 @@ export default function NotificationsDropdown() {
       setItems((prev) =>
         prev.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
       );
+      setUnread((u) => Math.max(0, u - 1)); // ✅ quick badge update
     } catch {
       // ignore
     }
@@ -95,6 +101,13 @@ export default function NotificationsDropdown() {
     } catch {
       // ignore
     }
+  };
+
+  const goDetails = async (id) => {
+    // ✅ UX: open details + mark read (safe even if already read)
+    await markRead(id);
+    setOpen(false);
+    navigate(`/notifications/${id}`);
   };
 
   const toggle = async () => {
@@ -116,6 +129,7 @@ export default function NotificationsDropdown() {
               {unread > 99 ? "99+" : unread}
             </span>
           )}
+
           {/* Bell icon */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -136,6 +150,7 @@ export default function NotificationsDropdown() {
 
       {open && (
         <div className="absolute right-0 mt-2 w-[92vw] max-w-sm rounded-2xl bg-base-100 border border-base-200 shadow-xl overflow-hidden z-50">
+          {/* Header */}
           <div className="px-4 py-3 bg-base-200/70 flex items-center justify-between">
             <div>
               <p className="font-extrabold">Notifications</p>
@@ -155,13 +170,14 @@ export default function NotificationsDropdown() {
               <button
                 className="btn btn-xs btn-outline"
                 onClick={markAllRead}
-                disabled={loading || (unread === 0 && unreadLocal === 0)}
+                disabled={loading || unreadLocal === 0}
               >
                 Mark all read
               </button>
             </div>
           </div>
 
+          {/* Body */}
           <div className="max-h-[70vh] overflow-auto">
             {err && (
               <div className="p-4">
@@ -215,14 +231,23 @@ export default function NotificationsDropdown() {
                             {timeAgo(n.createdAt)}
                           </span>
 
-                          {!n.isRead && (
+                          <div className="flex items-center gap-2">
                             <button
-                              className="btn btn-xs btn-primary"
-                              onClick={() => markRead(n._id)}
+                              className="btn btn-xs btn-outline"
+                              onClick={() => goDetails(n._id)}
                             >
-                              Mark read
+                              Details
                             </button>
-                          )}
+
+                            {!n.isRead && (
+                              <button
+                                className="btn btn-xs btn-primary"
+                                onClick={() => markRead(n._id)}
+                              >
+                                Mark read
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -232,6 +257,7 @@ export default function NotificationsDropdown() {
             )}
           </div>
 
+          {/* Footer */}
           <div className="px-4 py-3 bg-base-200/60 flex justify-end">
             <button className="btn btn-sm" onClick={() => setOpen(false)}>
               Close
