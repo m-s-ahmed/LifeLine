@@ -24,6 +24,7 @@ router.post("/", verifyFirebaseToken, async (req, res) => {
       district: body.district || "",
       hospitalName: body.hospitalName || "",
       hospitalAddress: body.hospitalAddress || "",
+      number: body.number || "",
       patientName: body.patientName || "",
       relation: body.relation || "",
       units: Number(body.units || 1),
@@ -34,9 +35,7 @@ router.post("/", verifyFirebaseToken, async (req, res) => {
       status: "open",
     });
 
-    return res
-      .status(201)
-      .json({ message: "Request created ✅", request: doc });
+    return res.status(201).json({ message: "Request created", request: doc });
   } catch (e) {
     return res.status(500).json({ message: "Create failed", error: e.message });
   }
@@ -68,7 +67,7 @@ router.patch("/:id/close", verifyFirebaseToken, async (req, res) => {
     );
 
     if (!doc) return res.status(404).json({ message: "Request not found" });
-    return res.json({ message: "Request closed ✅", request: doc });
+    return res.json({ message: "Request closed ", request: doc });
   } catch (e) {
     return res.status(500).json({ message: "Close failed", error: e.message });
   }
@@ -83,7 +82,7 @@ router.delete("/:id", verifyFirebaseToken, async (req, res) => {
     const ok = await BloodRequest.deleteOne({ _id: id, requesterUid: uid });
     if (!ok.deletedCount) return res.status(404).json({ message: "Not found" });
 
-    return res.json({ message: "Deleted ✅" });
+    return res.json({ message: "Deleted" });
   } catch (e) {
     return res.status(500).json({ message: "Delete failed", error: e.message });
   }

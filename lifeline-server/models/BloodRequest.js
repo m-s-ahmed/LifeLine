@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const bloodRequestSchema = new mongoose.Schema(
   {
-    // requester (যে রিকুয়েস্ট করছে)
+    // requester
     requesterUid: { type: String, required: true, index: true },
     requesterName: { type: String, default: "" },
     requesterEmail: { type: String, default: "" },

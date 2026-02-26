@@ -9,7 +9,7 @@ export default function SendRequestModal({ open, onClose, donor, me }) {
   const [msg, setMsg] = useState("");
   const [success, setSuccess] = useState("");
 
-  // ✅ donor uid safe (fallbacks)
+  // donor uid safe (fallbacks)
   const donorUid = useMemo(() => {
     if (!donor) return "";
     return (
@@ -25,7 +25,7 @@ export default function SendRequestModal({ open, onClose, donor, me }) {
   useEffect(() => {
     if (!open) return;
 
-    // ✅ reset every open
+    // reset every open
     setMsg("");
     setSuccess("");
     setSelected("");
@@ -72,7 +72,7 @@ export default function SendRequestModal({ open, onClose, donor, me }) {
     try {
       setSending(true);
 
-      // ✅ payload (you can add extra fields if your backend needs)
+      //  payload (you can add extra fields if your backend needs)
       const payload = {
         toUid: donorUid,
         requestId: selected,
@@ -84,7 +84,7 @@ export default function SendRequestModal({ open, onClose, donor, me }) {
 
       await axiosSecure.post("/api/notifications/send", payload);
 
-      setSuccess("Request sent ✅");
+      setSuccess("Request sent ");
       // optional: auto close after 800ms
       setTimeout(() => onClose?.(), 700);
     } catch (e) {
@@ -156,7 +156,7 @@ export default function SendRequestModal({ open, onClose, donor, me }) {
               ))}
             </select>
 
-            {/* ✅ small screen friendly list */}
+            {/* small screen friendly list */}
             {myReqs.length > 0 && (
               <div className="mt-3 max-h-48 overflow-auto rounded-xl border border-base-200">
                 <ul className="divide-y divide-base-200">

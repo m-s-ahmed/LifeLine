@@ -31,12 +31,12 @@ export default function NotificationsDropdown() {
     [items],
   );
 
-  // ✅ keep badge synced with current list (when dropdown is open)
+  // keep badge synced with current list (when dropdown is open)
   useEffect(() => {
     if (items.length) setUnread(unreadLocal);
   }, [unreadLocal, items.length]);
 
-  // ✅ close on outside click
+  // close on outside click
   useEffect(() => {
     const onDoc = (e) => {
       if (!boxRef.current) return;
@@ -46,7 +46,7 @@ export default function NotificationsDropdown() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  // ✅ poll unread count (badge will show without opening dropdown)
+  // poll unread count (badge will show without opening dropdown)
   useEffect(() => {
     let timer = null;
 
@@ -102,9 +102,17 @@ export default function NotificationsDropdown() {
       // ignore
     }
   };
-
+  const clearAll = async () => {
+    try {
+      await axiosSecure.delete("/api/notifications/clear/me");
+      setItems([]);
+      setUnread(0);
+    } catch {
+      // ignore
+    }
+  };
   const goDetails = async (id) => {
-    // ✅ UX: open details + mark read (safe even if already read)
+    //  UX: open details + mark read (safe even if already read)
     await markRead(id);
     setOpen(false);
     navigate(`/notifications/${id}`);
@@ -173,6 +181,14 @@ export default function NotificationsDropdown() {
                 disabled={loading || unreadLocal === 0}
               >
                 Mark all read
+              </button>
+
+              <button
+                className="btn btn-xs btn-error"
+                onClick={clearAll}
+                disabled={loading || items.length === 0}
+              >
+                Clear all
               </button>
             </div>
           </div>

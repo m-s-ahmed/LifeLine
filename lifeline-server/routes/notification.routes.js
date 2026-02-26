@@ -21,9 +21,9 @@ router.post("/send", verifyFirebaseToken, async (req, res) => {
         .status(400)
         .json({ message: "toUid and requestId are required" });
 
-    // ✅ validate blood request exists
+    // validate blood request exists
     const reqDoc = await BloodRequest.findById(requestId).select(
-      "bloodGroup district hospitalName neededDate status",
+      "bloodGroup district hospitalName neededDate status number patientName reason",
     );
 
     if (!reqDoc)
@@ -34,20 +34,22 @@ router.post("/send", verifyFirebaseToken, async (req, res) => {
         .status(400)
         .json({ message: "Only open requests can be sent" });
     }
-
-    // ✅ create notification
+    // message: `${reqDoc.bloodGroup} needed at ${reqDoc.hospitalName} (${reqDoc.district})`,
+    //create notification
     const notification = await Notification.create({
       toUid,
       fromUid,
       type: "blood_request",
       requestId,
       title: "Blood Request",
-      message: `${reqDoc.bloodGroup} needed at ${reqDoc.hospitalName} (${reqDoc.district})`,
+      message: `${reqDoc.bloodGroup} needed at ${reqDoc.hospitalName} (${reqDoc.district}) • Patient: ${
+        reqDoc.patientName || "N/A"
+      } • Reason: ${reqDoc.reason || "N/A"} • Contact: ${reqDoc.number || "N/A"}`,
       isRead: false,
     });
 
     return res.status(201).json({
-      message: "Request sent successfully ✅",
+      message: "Request sent successfully",
       notification,
     });
   } catch (e) {
@@ -69,7 +71,7 @@ router.get("/me", verifyFirebaseToken, async (req, res) => {
     const list = await Notification.find({ toUid: uid })
       .sort({ createdAt: -1 })
       .limit(limit)
-      .populate("requestId"); // ✅ so frontend can show request summary
+      .populate("requestId"); // so frontend can show request summary
 
     return res.json(list);
   } catch (e) {
@@ -98,6 +100,23 @@ router.get("/unread-count", verifyFirebaseToken, async (req, res) => {
 });
 
 /**
+ * PATCH /api/notifications/mark-all-read/me
+ */
+router.patch("/mark-all-read/me", verifyFirebaseToken, async (req, res) => {
+  try {
+    const uid = req.user?.uid;
+    await Notification.updateMany(
+      { toUid: uid, isRead: false },
+      { $set: { isRead: true } },
+    );
+    return res.json({ message: "All marked read ✅" });
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ message: "Mark all read failed", error: e.message });
+  }
+});
+/**
  * PATCH /api/notifications/:id/read
  */
 router.patch("/:id/read", verifyFirebaseToken, async (req, res) => {
@@ -114,29 +133,11 @@ router.patch("/:id/read", verifyFirebaseToken, async (req, res) => {
       await n.save();
     }
 
-    return res.json({ message: "Marked read ✅" });
+    return res.json({ message: "Marked read" });
   } catch (e) {
     return res
       .status(500)
       .json({ message: "Mark read failed", error: e.message });
-  }
-});
-
-/**
- * PATCH /api/notifications/mark-all-read/me
- */
-router.patch("/mark-all-read/me", verifyFirebaseToken, async (req, res) => {
-  try {
-    const uid = req.user?.uid;
-    await Notification.updateMany(
-      { toUid: uid, isRead: false },
-      { $set: { isRead: true } },
-    );
-    return res.json({ message: "All marked read ✅" });
-  } catch (e) {
-    return res
-      .status(500)
-      .json({ message: "Mark all read failed", error: e.message });
   }
 });
 
@@ -159,6 +160,20 @@ router.get("/:id", verifyFirebaseToken, async (req, res) => {
     return res
       .status(500)
       .json({ message: "Details fetch failed", error: e.message });
+  }
+});
+
+/**
+ * DELETE /api/notifications/clear/me
+ * Delete all notifications of logged-in user
+ */
+router.delete("/clear/me", verifyFirebaseToken, async (req, res) => {
+  try {
+    const uid = req.user?.uid;
+    await Notification.deleteMany({ toUid: uid });
+    return res.json({ message: "All notifications cleared ✅" });
+  } catch (e) {
+    return res.status(500).json({ message: "Clear failed", error: e.message });
   }
 });
 
