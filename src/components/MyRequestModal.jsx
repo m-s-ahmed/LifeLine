@@ -13,7 +13,7 @@ export default function MyRequestsModal({ open, onClose }) {
       setMsg("");
       const res = await axiosSecure.get("/api/requests/me");
       setList(res.data || []);
-    } catch (e) {
+    } catch {
       setMsg("Failed to load requests");
     } finally {
       setLoading(false);
@@ -123,7 +123,7 @@ export default function MyRequestsModal({ open, onClose }) {
                           value={r.hospitalAddress}
                         />
 
-                        {/* ✅ NEW: number field */}
+                        {/*NEW: number field */}
                         <Info label="Number" value={r.number} />
 
                         <Info label="Patient" value={r.patientName} />

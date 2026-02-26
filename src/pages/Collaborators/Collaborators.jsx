@@ -3,59 +3,44 @@ import React, { useEffect, useRef, useState } from "react";
 export default function Collaborators() {
   const trackRef = useRef(null);
   const [items, setItems] = useState([]);
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(0);
 
   // Load JSON from public
   useEffect(() => {
     fetch("/collaborators.json")
       .then((res) => res.json())
       .then((data) => {
-        setItems(data);
-        setActive(Math.min(1, Math.max(0, data.length - 1)));
+        setItems(Array.isArray(data) ? data : []);
+        setActive(0); // always start from first
       })
       .catch(() => setItems([]));
   }, []);
 
-  // Detect active card on scroll (center focused)
+  // Scroll to active slide whenever active changes
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
 
-    const onScroll = () => {
-      const children = Array.from(el.children);
-      const mid = el.scrollLeft + el.clientWidth / 2;
-
-      let bestIdx = 0;
-      let bestDist = Infinity;
-
-      children.forEach((child, idx) => {
-        const childMid = child.offsetLeft + child.clientWidth / 2;
-        const dist = Math.abs(childMid - mid);
-        if (dist < bestDist) {
-          bestDist = dist;
-          bestIdx = idx;
-        }
-      });
-
-      setActive(bestIdx);
-    };
-
-    onScroll();
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, [items]);
-
-  const scrollToIndex = (idx) => {
-    const el = trackRef.current;
-    if (!el) return;
-    const child = el.children[idx];
+    const child = el.children[active];
     if (!child) return;
 
     el.scrollTo({
       left: child.offsetLeft - (el.clientWidth - child.clientWidth) / 2,
       behavior: "smooth",
     });
+  }, [active, items]);
+
+  // Safe index setter (0 to last)
+  // When idx less than 0 , it will set 0
+  // When idx greater than last one, it will set last
+  const goTo = (idx) => {
+    if (!items.length) return;
+    const safeIdx = Math.min(items.length - 1, Math.max(0, idx));
+    setActive(safeIdx);
   };
+
+  const handlePrev = () => goTo(active - 1);
+  const handleNext = () => goTo(active + 1);
 
   // If any items not have
   if (!items.length) {
@@ -74,18 +59,16 @@ export default function Collaborators() {
   }
 
   return (
-    <section className="w-full mt-10  shadow-sm">
+    <section className="w-full mt-10 shadow-sm">
       <div>
         {/* Our Collaborators */}
-        <div>
-          <div className="text-center">
-            <h1 className=" p-5 text-4xl font-bold md:text-4xl">
-              Our Collaborators
-            </h1>
-            <p className="mt-1 text-sm text-base-content/60">
-              Partners who help with blood drives & emergency response.
-            </p>
-          </div>
+        <div className="text-center">
+          <h1 className="p-5 text-4xl font-bold md:text-4xl">
+            Our Collaborators
+          </h1>
+          <p className="mt-1 text-sm text-base-content/60">
+            Partners who help with blood drives & emergency response.
+          </p>
         </div>
 
         <div className="mx-auto max-w-6xl px-4 py-5 md:py-5">
@@ -94,10 +77,10 @@ export default function Collaborators() {
             <div
               ref={trackRef}
               className="
-              flex gap-6 overflow-x-auto scroll-smooth pb-6
-              [scrollbar-width:none] [-ms-overflow-style:none]
-              snap-x snap-mandatory
-            "
+                flex gap-6 overflow-x-auto scroll-smooth pb-6
+                [scrollbar-width:none] [-ms-overflow-style:none]
+                snap-x snap-mandatory
+              "
               style={{ WebkitOverflowScrolling: "touch" }}
             >
               <style>{`div::-webkit-scrollbar{display:none;}`}</style>
@@ -106,7 +89,7 @@ export default function Collaborators() {
                 const isActive = idx === active;
 
                 return (
-                  <div key={c.id} className="snap-center shrink-0">
+                  <div key={c.id ?? idx} className="snap-center shrink-0">
                     <div
                       className={[
                         "card bg-base-100 border border-base-200 rounded-2xl",
@@ -138,7 +121,9 @@ export default function Collaborators() {
                                 {c.name}
                               </h3>
                               <span
-                                className={`badge ${c.accent || "badge-neutral"} badge-sm font-bold`}
+                                className={`badge ${
+                                  c.accent || "badge-neutral"
+                                } badge-sm font-bold`}
                               >
                                 Partner
                               </span>
@@ -190,7 +175,7 @@ export default function Collaborators() {
               {items.map((_, idx) => (
                 <button
                   key={idx}
-                  onClick={() => scrollToIndex(idx)}
+                  onClick={() => goTo(idx)}
                   className={[
                     "h-2 w-2 rounded-full transition-all",
                     idx === active ? "bg-neutral w-5" : "bg-neutral/30",
@@ -205,15 +190,15 @@ export default function Collaborators() {
           <div className="hidden md:flex justify-center items-center gap-2 p-5">
             <button
               className="btn btn-sm btn-outline"
-              onClick={() => scrollToIndex(Math.max(0, active - 1))}
+              onClick={handlePrev}
+              disabled={active === 0}
             >
               Prev
             </button>
             <button
               className="btn btn-sm btn-outline"
-              onClick={() =>
-                scrollToIndex(Math.min(items.length - 1, active + 1))
-              }
+              onClick={handleNext}
+              disabled={active === items.length - 1}
             >
               Next
             </button>

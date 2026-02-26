@@ -14,6 +14,10 @@ import MyProfile from "../pages/MyProfile/MyProfile";
 import EditProfile from "../pages/EditProfile/EditProfile";
 import Feedback from "../pages/Feedback/Feedback";
 import NotificationDetails from "../pages/NotificationDetails";
+import ContactPage2 from "../components/Contact/ContactPage2";
+import Jobs from "../components/Jobs/Jobs";
+import ApplyNow from "../components/ApplyNow/ApplyNow";
+import OrganizationMembers from "../components/OrganizationMembers/OrganizationMembers";
 
 const router = createBrowserRouter([
   {
@@ -75,6 +79,23 @@ const router = createBrowserRouter([
       {
         path: "/notifications/:id",
         element: <NotificationDetails></NotificationDetails>,
+      },
+      {
+        path: "/contactpage",
+        element: <ContactPage2></ContactPage2>,
+      },
+      {
+        path: "/jobs",
+        element: <Jobs></Jobs>,
+      },
+
+      {
+        path: "/apply",
+        element: <ApplyNow></ApplyNow>,
+      },
+      {
+        path: "/orgmem",
+        element: <OrganizationMembers></OrganizationMembers>,
       },
       {
         path: "/*",

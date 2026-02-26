@@ -4,7 +4,7 @@ import { axiosSecure } from "../api/axiosSecure";
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 const isEmail = (v = "") => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim());
 
-// ✅ phone / number validation helper (BD friendly: 11 digits)
+// phone / number validation helper (BD friendly: 11 digits)
 const isValidNumber = (v = "") => {
   const s = String(v || "").trim();
   if (!s) return false;
@@ -27,7 +27,7 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
       neededTime: "",
       reason: "",
       note: "",
-      number: "", // ✅ NEW FIELD
+      number: "", // NEW FIELD
     }),
     [],
   );
@@ -52,7 +52,7 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
     relation: useRef(null),
     reason: useRef(null),
     note: useRef(null),
-    number: useRef(null), // ✅ NEW
+    number: useRef(null), // NEW
   };
 
   useEffect(() => {
@@ -126,7 +126,7 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
     if (form.note && String(form.note).trim().length > 500)
       e.note = "Note should be within 500 characters.";
 
-    // ✅ NEW: number is REQUIRED + must be valid BD number
+    //NEW: number is REQUIRED + must be valid BD number
     if (!String(form.number).trim()) e.number = "Number is required.";
     else if (!isValidNumber(form.number))
       e.number = "Use BD number like 01XXXXXXXXX or +8801XXXXXXXXX.";
@@ -148,7 +148,7 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
       "hospitalAddress",
       "neededDate",
       "neededTime",
-      "number", // ✅ NEW
+      "number", //NEW
       "patientName",
       "relation",
       "reason",
@@ -159,7 +159,8 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
     const firstKey = order.find((k) => eObj[k]);
     if (!firstKey) return;
 
-    if (bodyRef.current) bodyRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    if (bodyRef.current)
+      bodyRef.current.scrollTo({ top: 0, behavior: "smooth" });
 
     const r = refs[firstKey]?.current;
     if (r && typeof r.focus === "function") {
@@ -234,7 +235,10 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
           </div>
 
           <form onSubmit={submit} className="contents">
-            <div ref={bodyRef} className="px-4 sm:px-6 py-4 overflow-y-auto max-h-[72vh]">
+            <div
+              ref={bodyRef}
+              className="px-4 sm:px-6 py-4 overflow-y-auto max-h-[72vh]"
+            >
               {(topError || errors._me) && (
                 <div className="sticky top-0 z-10 pb-3 bg-base-100">
                   <div className="alert alert-error rounded-xl">
@@ -246,7 +250,9 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="label">
-                    <span className="label-text font-semibold">Blood Group*</span>
+                    <span className="label-text font-semibold">
+                      Blood Group*
+                    </span>
                   </label>
                   <select
                     ref={refs.bloodGroup}
@@ -264,7 +270,11 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                       </option>
                     ))}
                   </select>
-                  {errors.bloodGroup && <p className="mt-1 text-xs text-error">{errors.bloodGroup}</p>}
+                  {errors.bloodGroup && (
+                    <p className="mt-1 text-xs text-error">
+                      {errors.bloodGroup}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -281,7 +291,9 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     value={form.units}
                     onChange={onChange}
                   />
-                  {errors.units && <p className="mt-1 text-xs text-error">{errors.units}</p>}
+                  {errors.units && (
+                    <p className="mt-1 text-xs text-error">{errors.units}</p>
+                  )}
                 </div>
 
                 <div>
@@ -310,12 +322,16 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     onChange={onChange}
                     placeholder="Rajshahi..."
                   />
-                  {errors.district && <p className="mt-1 text-xs text-error">{errors.district}</p>}
+                  {errors.district && (
+                    <p className="mt-1 text-xs text-error">{errors.district}</p>
+                  )}
                 </div>
 
                 <div className="sm:col-span-2">
                   <label className="label">
-                    <span className="label-text font-semibold">Hospital Name*</span>
+                    <span className="label-text font-semibold">
+                      Hospital Name*
+                    </span>
                   </label>
                   <input
                     ref={refs.hospitalName}
@@ -325,12 +341,18 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     onChange={onChange}
                     placeholder="Hospital / Clinic name"
                   />
-                  {errors.hospitalName && <p className="mt-1 text-xs text-error">{errors.hospitalName}</p>}
+                  {errors.hospitalName && (
+                    <p className="mt-1 text-xs text-error">
+                      {errors.hospitalName}
+                    </p>
+                  )}
                 </div>
 
                 <div className="sm:col-span-2">
                   <label className="label">
-                    <span className="label-text font-semibold">Hospital Address</span>
+                    <span className="label-text font-semibold">
+                      Hospital Address
+                    </span>
                   </label>
                   <input
                     ref={refs.hospitalAddress}
@@ -340,12 +362,18 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     onChange={onChange}
                     placeholder="Full address (optional)"
                   />
-                  {errors.hospitalAddress && <p className="mt-1 text-xs text-error">{errors.hospitalAddress}</p>}
+                  {errors.hospitalAddress && (
+                    <p className="mt-1 text-xs text-error">
+                      {errors.hospitalAddress}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-semibold">Needed Date*</span>
+                    <span className="label-text font-semibold">
+                      Needed Date*
+                    </span>
                   </label>
                   <input
                     ref={refs.neededDate}
@@ -356,12 +384,18 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     onChange={onChange}
                     min={todayISO()}
                   />
-                  {errors.neededDate && <p className="mt-1 text-xs text-error">{errors.neededDate}</p>}
+                  {errors.neededDate && (
+                    <p className="mt-1 text-xs text-error">
+                      {errors.neededDate}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-semibold">Needed Time</span>
+                    <span className="label-text font-semibold">
+                      Needed Time
+                    </span>
                   </label>
                   <input
                     ref={refs.neededTime}
@@ -373,7 +407,7 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                   />
                 </div>
 
-                {/* ✅ NEW: Number field */}
+                {/* NEW: Number field */}
                 <div className="sm:col-span-2">
                   <label className="label">
                     <span className="label-text font-semibold">Number*</span>
@@ -390,12 +424,16 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     placeholder="01XXXXXXXXX"
                     inputMode="tel"
                   />
-                  {errors.number && <p className="mt-1 text-xs text-error">{errors.number}</p>}
+                  {errors.number && (
+                    <p className="mt-1 text-xs text-error">{errors.number}</p>
+                  )}
                 </div>
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-semibold">Patient Name</span>
+                    <span className="label-text font-semibold">
+                      Patient Name
+                    </span>
                   </label>
                   <input
                     ref={refs.patientName}
@@ -405,7 +443,11 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     onChange={onChange}
                     placeholder="Optional"
                   />
-                  {errors.patientName && <p className="mt-1 text-xs text-error">{errors.patientName}</p>}
+                  {errors.patientName && (
+                    <p className="mt-1 text-xs text-error">
+                      {errors.patientName}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -420,7 +462,9 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     onChange={onChange}
                     placeholder="Brother / Friend..."
                   />
-                  {errors.relation && <p className="mt-1 text-xs text-error">{errors.relation}</p>}
+                  {errors.relation && (
+                    <p className="mt-1 text-xs text-error">{errors.relation}</p>
+                  )}
                 </div>
 
                 <div className="sm:col-span-2">
@@ -435,7 +479,9 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     onChange={onChange}
                     placeholder="Accident / Surgery / Anemia..."
                   />
-                  {errors.reason && <p className="mt-1 text-xs text-error">{errors.reason}</p>}
+                  {errors.reason && (
+                    <p className="mt-1 text-xs text-error">{errors.reason}</p>
+                  )}
                 </div>
 
                 <div className="sm:col-span-2">
@@ -454,17 +500,33 @@ export default function AddRequestModal({ open, onClose, me, onCreated }) {
                     placeholder="Any extra instruction..."
                     maxLength={500}
                   />
-                  {errors.note && <p className="mt-1 text-xs text-error">{errors.note}</p>}
+                  {errors.note && (
+                    <p className="mt-1 text-xs text-error">{errors.note}</p>
+                  )}
                 </div>
               </div>
             </div>
 
             <div className="px-4 sm:px-6 py-4 border-t border-base-200 bg-base-100 flex flex-col sm:flex-row gap-2 sm:justify-end">
-              <button type="button" className="btn btn-ghost" onClick={onClose} disabled={loading}>
+              {/* <button type="button" className="btn btn-ghost" onClick={onClose} disabled={loading}>
                 Cancel
-              </button>
+              </button> */}
 
-              <button className="btn btn-neutral" disabled={loading}>
+              {/* <button className="btn btn-neutral" disabled={loading}>
+                {loading ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Request"
+                )}
+              </button> */}
+              <button
+                className="bg-red-950 text-white border border-red-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
+                disabled={loading}
+              >
+                <span class="bg-red-400 shadow-red-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
                 {loading ? (
                   <>
                     <span className="loading loading-spinner loading-sm" />

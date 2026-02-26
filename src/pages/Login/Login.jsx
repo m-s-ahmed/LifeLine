@@ -3,7 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
 
 export default function Login() {
-  const { signIn, googleSignIn } = useContext(AuthContext);
+  // const { signIn, googleSignIn } = useContext(AuthContext);
+  const { signIn} = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -29,18 +30,18 @@ export default function Login() {
     }
   };
 
-  const handleGoogle = async () => {
-    setErr("");
-    try {
-      setBusy(true);
-      await googleSignIn();
-      navigate(from, { replace: true });
-    } catch (e2) {
-      setErr(e2?.message || "Google login failed");
-    } finally {
-      setBusy(false);
-    }
-  };
+  // const handleGoogle = async () => {
+  //   setErr("");
+  //   try {
+  //     setBusy(true);
+  //     await googleSignIn();
+  //     navigate(from, { replace: true });
+  //   } catch (e2) {
+  //     setErr(e2?.message || "Google login failed");
+  //   } finally {
+  //     setBusy(false);
+  //   }
+  // };
 
   return (
     <section className="min-h-[calc(100vh-72px)] bg-base-200/40">
@@ -123,7 +124,7 @@ export default function Login() {
                 </div>
 
                 <button
-                  className="btn btn-neutral w-full rounded-xl"
+                  className=" w-full  bg-red-950 text-white border border-red-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
                   disabled={busy}
                 >
                   {busy ? (
@@ -136,16 +137,16 @@ export default function Login() {
                   )}
                 </button>
 
-                <div className="divider text-sm">OR</div>
+                {/* <div className="divider text-sm">OR</div> */}
 
-                <button
+                {/* <button
                   type="button"
                   onClick={handleGoogle}
                   className="btn btn-outline w-full rounded-xl"
                   disabled={busy}
                 >
                   Continue with Google
-                </button>
+                </button> */}
 
                 <p className="text-sm text-center text-base-content/70">
                   Don’t have an account?{" "}

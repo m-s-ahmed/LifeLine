@@ -24,6 +24,7 @@ export default function AboutUs() {
         }
       } catch (e) {
         // silent fail (UI fallback)
+        console.log(e);
       }
     };
 
@@ -88,7 +89,7 @@ export default function AboutUs() {
       no: "03",
       title: "Connect & Save Lives",
       desc: "Contact donors, confirm availability, and complete donation with care and safety.",
-      to: "/feedback", // ✅ give feedback route
+      to: "/feedback", //give feedback route
       cta: "Give your Feedback",
     },
   ];

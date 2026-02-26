@@ -151,7 +151,7 @@ export default function AsDonor() {
     setForm((p) => ({ ...p, [name]: type === "checkbox" ? checked : value }));
   };
 
-  // ✅ Minimal + password validation
+  //password validation
   const validate = () => {
     const e = {};
 
@@ -185,22 +185,22 @@ export default function AsDonor() {
     try {
       setSubmitting(true);
 
-      // ✅ 1) Create Firebase user
+      //1) Create Firebase user
       const userCred = await createUser(form.email.trim(), form.password);
 
-      // ✅ 2) Update profile name
+      //2) Update profile name
       const fullName = `${form.firstName.trim()} ${form.lastName.trim()}`;
       await updateUserProfile(fullName, "");
 
-      // ✅ 3) Get token (force refresh for production stability)
+      //3) Get token (force refresh for production stability)
       const token = await userCred.user.getIdToken(true);
 
-      // ✅ 4) Save donor data to MongoDB
+      //4) Save donor data to MongoDB
       const donorPayload = {
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
         phone: form.phone.trim(),
-        email: form.email.trim(), // ✅ email add করলাম (ডিবিতে রাখলে সুবিধা)
+        email: form.email.trim(),
         address: form.address.trim(),
         age: form.age ? Number(form.age) : null,
         bloodGroup: form.bloodGroup,
@@ -211,7 +211,7 @@ export default function AsDonor() {
         lastDonationYear: form.lastDonationYear,
       };
 
-      // 🔥 IMPORTANT: localhost না, env থেকে API URL
+      //IMPORTANT: Not localhost , Take API URL from env
       const API = import.meta.env.VITE_API_URL;
 
       const res = await fetch(`${API}/api/donors/me`, {
@@ -223,7 +223,7 @@ export default function AsDonor() {
         body: JSON.stringify(donorPayload),
       });
 
-      // error details দেখার জন্য:
+      //We see here our  error details
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         throw new Error(data?.message || "MongoDB save failed");
@@ -231,10 +231,10 @@ export default function AsDonor() {
 
       setToast({
         type: "success",
-        message: "Donor registered successfully ✅",
+        message: "Donor registered successfully.",
       });
 
-      // ✅ 5) তুমি পরে login করবে — তাই logout করে login page
+      //5)As we  login later — We set logout before and then login page
       setTimeout(async () => {
         try {
           await logout();
@@ -527,7 +527,8 @@ export default function AsDonor() {
                 <div className="md:col-span-9 flex justify-end">
                   <button
                     type="submit"
-                    className="btn btn-neutral rounded-md px-8"
+                    // className="btn btn-neutral rounded-md px-8"
+                    className="bg-red-950 text-white border border-red-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
                     disabled={submitting}
                   >
                     {submitting ? (

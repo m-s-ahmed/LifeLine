@@ -179,10 +179,10 @@ export default function MyProfile() {
 
       const res = await axiosSecure.post("/api/donations", payload);
 
-      // ✅ update UI instantly
+      //update UI instantly
       setDonations((prev) => [res.data, ...prev]);
 
-      setToast({ type: "success", message: "Donation added ✅" });
+      setToast({ type: "success", message: "Donation added " });
       setIsModalOpen(false);
     } catch (err) {
       console.log(err);
@@ -225,10 +225,11 @@ export default function MyProfile() {
           <div className="lg:col-span-8">
             <div className="rounded-3xl bg-base-100 border border-base-200 shadow-xl overflow-hidden">
               {/* Header */}
-              <div className="p-6 md:p-7 flex items-center justify-between gap-4">
+              {/* className="p-6 md:p-7 flex items-center justify-between gap-4" */}
+              <div className="p-5 sm:p-6 md:p-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="avatar placeholder">
-                    <div className="w-16 rounded-2xl bg-neutral text-neutral-content">
+                    <div className=" flex justify-center items-center w-16 rounded-2xl bg-neutral text-neutral-content">
                       <span className="text-lg font-extrabold">{initials}</span>
                     </div>
                   </div>
@@ -244,23 +245,21 @@ export default function MyProfile() {
                     </p>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <button className="btn btn-ghost btn-sm rounded-full">
-                    🔔
-                  </button>
-
-                  {/* ✅ Add Donation */}
+                {/* className="flex items-center gap-2" */}
+                <div className="flex flex-wrap gap-2 sm:justify-end">
+                  {/* Add Donation */}
                   <button
                     onClick={openModal}
-                    className="btn btn-outline btn-sm rounded-xl px-4"
+                    // className="btn btn-outline btn-sm rounded-xl px-4"
+                    // className="btn btn-outline btn-sm rounded-xl px-4 w-full sm:w-auto"
+                    className="w-full sm:w-auto bg-sky-90 text-black border border-orange-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
                   >
                     + Add Donation
                   </button>
 
                   <Link
                     to="/edit-profile"
-                    className="btn btn-neutral btn-sm rounded-xl px-5"
+                    className="text-center w-full sm:w-auto  text-black border border-orange-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
                   >
                     Edit Profile
                   </Link>
@@ -311,7 +310,7 @@ export default function MyProfile() {
 
           {/* Right sidebar */}
           <div className="lg:col-span-4 space-y-6">
-            {/* ✅ Donation History (real) */}
+            {/*  Donation History (real) */}
             <div className="rounded-3xl bg-base-100 border border-base-200 shadow-xl p-5">
               <div className="flex items-center justify-between">
                 <h3 className="font-extrabold">Donation History</h3>
@@ -360,7 +359,7 @@ export default function MyProfile() {
               </p>
             </div>
 
-            {/* ✅ Real Calendar (current month) */}
+            {/*  Real Calendar (current month) */}
             <div className="rounded-3xl bg-base-100 border border-base-200 shadow-xl p-5">
               <div className="flex items-center justify-between">
                 <h3 className="font-extrabold">{monthLabel}</h3>
@@ -431,7 +430,7 @@ export default function MyProfile() {
         </div>
       </div>
 
-      {/* ✅ Add Donation Modal */}
+      {/*  Add Donation Modal */}
       {isModalOpen && (
         <div className="modal modal-open">
           <div className="modal-box rounded-2xl">

@@ -6,7 +6,7 @@ import AddRequestModal from "../../components/AddRequestModal";
 import MyRequestsModal from "../../components/MyRequestModal";
 import SendRequestModal from "../../components/SendRequestModal";
 
-// ✅ Division list (BD)
+//Division list (BD)
 const DIVISIONS = [
   "Dhaka",
   "Chattogram",
@@ -18,7 +18,7 @@ const DIVISIONS = [
   "Mymensingh",
 ];
 
-// ✅ Districts (starter set)
+//Districts (starter set)
 const DISTRICTS_BY_DIVISION = {
   Dhaka: ["Dhaka", "Gazipur", "Narayanganj", "Tangail", "Manikganj"],
   Chattogram: ["Chattogram", "Cox's Bazar", "Cumilla", "Noakhali", "Feni"],
@@ -51,7 +51,7 @@ const MONTH_INDEX = {
 export default function FindBlood() {
   const { user } = useContext(AuthContext);
 
-  // ✅ modal state
+  // modal state
   const [openAdd, setOpenAdd] = useState(false);
   const [openView, setOpenView] = useState(false);
   const [openSend, setOpenSend] = useState(false);
@@ -68,7 +68,7 @@ export default function FindBlood() {
   const [donors, setDonors] = useState([]);
   const [msg, setMsg] = useState("");
 
-  // ✅ current user info for modal prefilling
+  // current user info for modal prefilling
   const me = useMemo(
     () => ({
       name: user?.displayName || "",
@@ -182,12 +182,12 @@ export default function FindBlood() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <button className="btn btn-ghost" onClick={handleReset}>
+            <button className="btn text-white btn-active btn-error" onClick={handleReset}>
               Reset
             </button>
 
             <button
-              className="btn btn-neutral"
+              className="btn btn-outline text-black font-bold btn-success"
               onClick={handleSearch}
               disabled={loading}
             >
@@ -202,16 +202,18 @@ export default function FindBlood() {
             </button>
 
             <button
-              className="btn btn-outline"
+              className="bg-red-950 text-white border border-red-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
               onClick={() => setOpenAdd(true)}
             >
+                <span class="bg-red-400 shadow-red-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
               Add Request
             </button>
 
             <button
-              className="btn btn-outline"
+              className="bg-rose-950 text-white border border-rose-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
               onClick={() => setOpenView(true)}
             >
+                <span class="bg-red-400 shadow-red-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
               View Request
             </button>
           </div>
@@ -319,7 +321,7 @@ export default function FindBlood() {
             const lastDonationISO = buildLastDonationDate(d);
             const availability = getAvailability(lastDonationISO);
 
-            // ✅ IMPORTANT: fallback uid mapping (Send Request এর জন্য)
+            // IMPORTANT: fallback uid mapping ( for Send Request )
             const donorUid =
               d.uid ||
               d.firebaseUid ||
@@ -430,7 +432,7 @@ export default function FindBlood() {
         </div>
       </div>
 
-      {/* ✅ MODALS */}
+      {/*MODALS */}
       <AddRequestModal
         open={openAdd}
         onClose={() => setOpenAdd(false)}
