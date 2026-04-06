@@ -16,7 +16,7 @@ router.get("/donors", async (req, res) => {
     const pipeline = [
       { $match: match },
 
-      // ✅ Join with donations collection
+      // Join with donations collection
       {
         $lookup: {
           from: "donations", // collection name must match (usually plural)
@@ -26,14 +26,14 @@ router.get("/donors", async (req, res) => {
         },
       },
 
-      // ✅ latest donation বের করা (max date)
+      // latest donation বের করা (max date)
       {
         $addFields: {
           lastDonationDate: { $max: "$donations.date" },
         },
       },
 
-      // ✅ projection (privacy)
+      // projection (privacy)
       {
         $project: {
           _id: 1,
@@ -57,7 +57,7 @@ router.get("/donors", async (req, res) => {
 
     let donors = await Donor.aggregate(pipeline);
 
-    // ✅ availableOnly filter (3 months rule using lastDonationDate)
+    // availableOnly filter (3 months rule using lastDonationDate)
     if (availableOnly === "true") {
       const now = new Date();
       donors = donors.filter((d) => {

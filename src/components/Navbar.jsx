@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider";
 import NotificationsDropdown from "../components/NotificationDropdown";
+import { axiosSecure } from "../api/axiosSecure";
 
 const getInitials = (text = "") => {
   const s = text.trim();
@@ -14,6 +15,28 @@ const getInitials = (text = "") => {
 const Navbar = () => {
   // Object Destructuring
   const { user, logout } = useContext(AuthContext);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user?.email) {
+        setIsAdmin(false);
+        return;
+      }
+
+      try {
+        const res = await axiosSecure.get(
+          `/api/donors/admin-check?email=${user.email}`,
+        );
+        setIsAdmin(res.data?.isAdmin === true);
+      } catch (error) {
+        console.log(error);
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdmin();
+  }, [user]);
 
   const navLinks = (
     <>
@@ -69,6 +92,16 @@ const Navbar = () => {
                 }
               >
                 Register As Organization
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/admin-login"
+                className={({ isActive }) =>
+                  isActive ? "text-primary font-bold" : ""
+                }
+              >
+                Admin Login
               </NavLink>
             </li>
           </ul>
@@ -158,6 +191,14 @@ const Navbar = () => {
       </div>
       {/* className="navbar-end mr-5 gap-10" */}
       <div className="navbar-end mr-2 sm:mr-5 flex items-center gap-2 sm:gap-4 md:gap-6 lg:gap-10 flex-wrap justify-end">
+        {isAdmin && (
+          <Link
+            to="/admin-dashboard"
+            className="bg-slate-900 text-white border border-slate-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300"
+          >
+            Admin Panel
+          </Link>
+        )}
         {!user ? (
           <Link
             to="/login"

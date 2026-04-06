@@ -23,9 +23,7 @@ router.post("/", async (req, res) => {
       uid: String(uid || ""),
     });
 
-    return res
-      .status(201)
-      .json({ message: "Feedback saved ✅", feedback: doc });
+    return res.status(201).json({ message: "Feedback saved", feedback: doc });
   } catch (e) {
     return res
       .status(500)

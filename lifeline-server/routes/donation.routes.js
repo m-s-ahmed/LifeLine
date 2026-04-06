@@ -6,7 +6,7 @@ const Donor = require("../models/Donor");
 const router = express.Router();
 
 /**
- * ✅ Add donation (protected)
+ * Add donation (protected)
  * POST /api/donations
  * body: { date, units, place, note }
  */
@@ -35,7 +35,7 @@ router.post("/", verifyFirebaseToken, async (req, res) => {
 });
 
 /**
- * ✅ Get my donations (protected)
+ * Get my donations (protected)
  * GET /api/donations/me
  */
 router.get("/me", verifyFirebaseToken, async (req, res) => {
@@ -49,7 +49,7 @@ router.get("/me", verifyFirebaseToken, async (req, res) => {
 });
 
 /**
- * ✅ Delete donation (optional)
+ * Delete donation (optional)
  * DELETE /api/donations/:id
  */
 router.delete("/:id", verifyFirebaseToken, async (req, res) => {

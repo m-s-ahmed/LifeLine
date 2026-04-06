@@ -18,6 +18,9 @@ import ContactPage2 from "../components/Contact/ContactPage2";
 import Jobs from "../components/Jobs/Jobs";
 import ApplyNow from "../components/ApplyNow/ApplyNow";
 import OrganizationMembers from "../components/OrganizationMembers/OrganizationMembers";
+import AdminRoute from "../providers/AdminRoute";
+import AdminLogin from "../pages/Admin/AdminLogin";
+import AdminDashboard from "../pages/Admin/AdminDashboard";
 
 const router = createBrowserRouter([
   {
@@ -96,6 +99,18 @@ const router = createBrowserRouter([
       {
         path: "/orgmem",
         element: <OrganizationMembers></OrganizationMembers>,
+      },
+      {
+        path: "/admin-login",
+        element: <AdminLogin></AdminLogin>,
+      },
+      {
+        path: "/admin-dashboard",
+        element: (
+          <AdminRoute>
+            <AdminDashboard></AdminDashboard>
+          </AdminRoute>
+        ),
       },
       {
         path: "/*",
