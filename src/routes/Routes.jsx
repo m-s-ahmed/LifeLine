@@ -21,6 +21,8 @@ import OrganizationMembers from "../components/OrganizationMembers/OrganizationM
 import AdminRoute from "../providers/AdminRoute";
 import AdminLogin from "../pages/Admin/AdminLogin";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
+import AdminDonors from "../pages/Admin/AdminDonors";
+import AdminAnalytics from "../pages/Admin/AdminAnalytics";
 
 const router = createBrowserRouter([
   {
@@ -109,6 +111,22 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <AdminDashboard></AdminDashboard>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/admin-donors",
+        element: (
+          <AdminRoute>
+            <AdminDonors />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/admin-analytics",
+        element: (
+          <AdminRoute>
+            <AdminAnalytics />
           </AdminRoute>
         ),
       },
