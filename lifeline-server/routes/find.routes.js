@@ -1,3 +1,22 @@
+/**Frontend (React + Axios)
+        ↓
+API Call (/donors)
+        ↓
+Query Params Extract
+        ↓
+Dynamic Match Build
+        ↓
+MongoDB Aggregation
+   → Match
+   → Lookup (Join)
+   → Compute lastDonation
+   → Project
+   → Sort + Limit
+        ↓
+Availability Filter (90 days)
+        ↓
+Response to Client */
+
 const express = require("express");
 const Donor = require("../models/Donor");
 
@@ -7,7 +26,7 @@ const router = express.Router();
 router.get("/donors", async (req, res) => {
   try {
     const { bloodGroup, district, division, availableOnly } = req.query;
-
+    // dynamic filter
     const match = {};
     if (bloodGroup) match.bloodGroup = bloodGroup;
     if (district) match.district = district;

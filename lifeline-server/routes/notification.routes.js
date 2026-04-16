@@ -5,6 +5,8 @@ const router = express.Router();
 const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
 const Notification = require("../models/Notification");
 const BloodRequest = require("../models/BloodRequest");
+const DonorResponse = require("../models/DonorResponse");
+const Conversation = require("../models/Conversation");
 
 /**
  * POST /api/notifications/send
@@ -29,7 +31,7 @@ router.post("/send", verifyFirebaseToken, async (req, res) => {
     if (!reqDoc)
       return res.status(404).json({ message: "Blood request not found" });
 
-    if (reqDoc.status && reqDoc.status !== "open") {
+    if (reqDoc.status && reqDoc.status !== "approved") {
       return res
         .status(400)
         .json({ message: "Only open requests can be sent" });
@@ -109,7 +111,7 @@ router.patch("/mark-all-read/me", verifyFirebaseToken, async (req, res) => {
       { toUid: uid, isRead: false },
       { $set: { isRead: true } },
     );
-    return res.json({ message: "All marked read ✅" });
+    return res.json({ message: "All marked read" });
   } catch (e) {
     return res
       .status(500)
@@ -171,10 +173,103 @@ router.delete("/clear/me", verifyFirebaseToken, async (req, res) => {
   try {
     const uid = req.user?.uid;
     await Notification.deleteMany({ toUid: uid });
-    return res.json({ message: "All notifications cleared ✅" });
+    return res.json({ message: "All notifications cleared" });
   } catch (e) {
     return res.status(500).json({ message: "Clear failed", error: e.message });
   }
 });
 
+router.post("/:id/respond", verifyFirebaseToken, async (req, res) => {
+  try {
+    const uid = req.user?.uid;
+    const { response, responseMessage } = req.body || {};
+
+    if (!["accepted", "declined"].includes(response)) {
+      return res.status(400).json({ message: "Invalid response type" });
+    }
+
+    const n = await Notification.findById(req.params.id).populate("requestId");
+    if (!n) return res.status(404).json({ message: "Notification not found" });
+
+    if (String(n.toUid) !== String(uid)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    if (n.type !== "blood_request_forwarded") {
+      return res.status(400).json({
+        message: "This notification is not respondable",
+      });
+    }
+
+    const responseDoc = await DonorResponse.findOne({
+      notificationId: n._id,
+      donorUid: uid,
+    });
+
+    if (!responseDoc) {
+      return res.status(404).json({ message: "Response record not found" });
+    }
+
+    if (responseDoc.status !== "pending") {
+      return res.status(400).json({
+        message: "You already responded to this request",
+      });
+    }
+
+    responseDoc.status = response;
+    responseDoc.responseMessage = responseMessage || "";
+    responseDoc.respondedAt = new Date();
+    await responseDoc.save();
+
+    await Notification.create({
+      toUid: responseDoc.requesterUid,
+      fromUid: uid,
+      type: response === "accepted" ? "donor_accepted" : "donor_declined",
+      title:
+        response === "accepted"
+          ? "Donor Accepted Request"
+          : "Donor Declined Request",
+      message:
+        response === "accepted"
+          ? `${responseDoc.donorName || "A donor"} accepted your blood request.You can now start chatting.`
+          : `${responseDoc.donorName || "A donor"} is not available to donate right now.`,
+      requestId: n.requestId?._id || n.requestId,
+      isRead: false,
+    });
+
+    let conversation = null;
+
+    if (response === "accepted") {
+      conversation = await Conversation.findOneAndUpdate(
+        {
+          requestId: n.requestId?._id || n.requestId,
+          requesterUid: responseDoc.requesterUid,
+          donorUid: uid,
+        },
+        {
+          $setOnInsert: {
+            requesterUid: responseDoc.requesterUid,
+            donorUid: uid,
+            requestId: n.requestId?._id || n.requestId,
+            donorName: responseDoc.donorName || "",
+            requesterName: n.requestId?.requesterName || "",
+            isActive: true,
+          },
+        },
+        { upsert: true, new: true },
+      );
+    }
+
+    return res.json({
+      message: `Request ${response} successfully`,
+      response: responseDoc,
+      conversationId: conversation?._id || null,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      message: "Response failed",
+      error: e.message,
+    });
+  }
+});
 module.exports = router;

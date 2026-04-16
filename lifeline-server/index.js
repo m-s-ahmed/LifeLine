@@ -11,7 +11,7 @@ const statsRoutes = require("./routes/stats.routes");
 const requestRoutes = require("./routes/request.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const adminRoutes = require("./routes/admin.routes");
-
+const chatRoutes = require("./routes/chat.routes");
 const app = express();
 
 app.use(express.json());
@@ -42,6 +42,7 @@ app.use("/api/stats", statsRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/chat", chatRoutes);
 
 const port = process.env.PORT || 5000;
 

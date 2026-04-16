@@ -22,7 +22,46 @@ export default function NotificationDetails() {
   const [loading, setLoading] = useState(true);
   const [n, setN] = useState(null);
   const [err, setErr] = useState("");
+  const [responding, setResponding] = useState(false);
+  const [responseMsg, setResponseMsg] = useState("");
+  const [conversationId, setConversationId] = useState(null);
 
+  const handleRespond = async (response) => {
+    try {
+      setResponding(true);
+      const res = await axiosSecure.post(`/api/notifications/${id}/respond`, {
+        response,
+        responseMessage: responseMsg,
+      });
+
+      setConversationId(res.data?.conversationId || null);
+
+      const refreshed = await axiosSecure.get(`/api/notifications/${id}`);
+      setN(refreshed.data);
+    } catch (e) {
+      setErr(e?.response?.data?.message || "Response failed");
+    } finally {
+      setResponding(false);
+    }
+  };
+  // useEffect(() => {
+  //   const load = async () => {
+  //     try {
+  //       setErr("");
+  //       setLoading(true);
+
+  //       const res = await axiosSecure.get(`/api/notifications/${id}`);
+  //       setN(res.data);
+
+  //       await axiosSecure.patch(`/api/notifications/${id}/read`);
+  //     } catch (e) {
+  //       setErr(e?.response?.data?.message || "Failed to load notification");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   if (id) load();
+  // }, [id]);
   useEffect(() => {
     const load = async () => {
       try {
@@ -32,6 +71,23 @@ export default function NotificationDetails() {
         const res = await axiosSecure.get(`/api/notifications/${id}`);
         setN(res.data);
 
+        if (
+          res.data?.requestId?._id &&
+          (res.data?.type === "donor_accepted" ||
+            res.data?.type === "blood_request_forwarded")
+        ) {
+          try {
+            const convoRes = await axiosSecure.get(
+              `/api/chat/conversation-by-request/${res.data.requestId._id}`,
+            );
+            setConversationId(convoRes.data?._id || null);
+          } catch {
+            setConversationId(null);
+          }
+        } else {
+          setConversationId(null);
+        }
+
         await axiosSecure.patch(`/api/notifications/${id}/read`);
       } catch (e) {
         setErr(e?.response?.data?.message || "Failed to load notification");
@@ -39,9 +95,9 @@ export default function NotificationDetails() {
         setLoading(false);
       }
     };
+
     if (id) load();
   }, [id]);
-
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -137,6 +193,55 @@ export default function NotificationDetails() {
                 <Link to="/feedback" className="btn btn-sm btn-outline">
                   Give Feedback
                 </Link>
+
+                {conversationId && (
+                  <Link
+                    to={`/chat/${conversationId}`}
+                    className="btn btn-sm btn-success"
+                  >
+                    Open Chat
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
+          {n.type === "blood_request_forwarded" && (
+            <div className="mt-5 rounded-2xl border border-base-200 bg-base-100 p-4">
+              <p className="font-bold">Your Response</p>
+
+              <textarea
+                className="textarea textarea-bordered w-full mt-3"
+                rows={3}
+                placeholder="Optional response message"
+                value={responseMsg}
+                onChange={(e) => setResponseMsg(e.target.value)}
+              />
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  className="btn btn-success btn-sm"
+                  onClick={() => handleRespond("accepted")}
+                  disabled={responding}
+                >
+                  I Can Donate
+                </button>
+
+                <button
+                  className="btn btn-error btn-sm"
+                  onClick={() => handleRespond("declined")}
+                  disabled={responding}
+                >
+                  Not Available
+                </button>
+
+                {conversationId && (
+                  <Link
+                    to={`/chat/${conversationId}`}
+                    className="btn btn-primary btn-sm"
+                  >
+                    Open Chat
+                  </Link>
+                )}
               </div>
             </div>
           )}

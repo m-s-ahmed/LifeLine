@@ -101,7 +101,7 @@ export default function EditProfile() {
     try {
       setSaving(true);
 
-      // ✅ email/uid backend token থেকে enforce হবে; তবুও payload পাঠাতে সমস্যা নেই
+      //  email/uid backend token থেকে enforce হবে; তবুও payload পাঠাতে সমস্যা নেই
       const payload = {
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),

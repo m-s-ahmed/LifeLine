@@ -25,6 +25,9 @@ export default function AdminTopNav() {
       <NavLink to="/admin-analytics" className={linkClass}>
         Analytics
       </NavLink>
+      <NavLink to="/admin-response-history" className={linkClass}>
+        Response History
+      </NavLink>
     </div>
   );
 }

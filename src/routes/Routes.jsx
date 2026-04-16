@@ -23,7 +23,8 @@ import AdminLogin from "../pages/Admin/AdminLogin";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import AdminDonors from "../pages/Admin/AdminDonors";
 import AdminAnalytics from "../pages/Admin/AdminAnalytics";
-
+import AdminResponseHistory from "../pages/Admin/AdminResponseHistory";
+import ChatRoom from "../pages/Chat/ChatRoom";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -128,6 +129,22 @@ const router = createBrowserRouter([
           <AdminRoute>
             <AdminAnalytics />
           </AdminRoute>
+        ),
+      },
+      {
+        path: "/admin-response-history",
+        element: (
+          <AdminRoute>
+            <AdminResponseHistory />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/chat/:conversationId",
+        element: (
+          <PrivateRoute>
+            <ChatRoom />
+          </PrivateRoute>
         ),
       },
       {
