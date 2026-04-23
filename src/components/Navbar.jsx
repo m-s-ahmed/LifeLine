@@ -81,7 +81,7 @@ const Navbar = () => {
                   isActive ? "text-primary font-bold" : ""
                 }
               >
-                Register As Donor
+                Apply For Register
               </NavLink>
             </li>
             <li>
