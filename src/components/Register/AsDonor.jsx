@@ -268,7 +268,7 @@ export default function AsDonor() {
         <div className="overflow-hidden rounded-2xl bg-base-100 shadow-xl border border-base-200">
           <div className="bg-gradient-to-r from-[#4b0c2a] via-[#7a0f3a] to-[#c21d4b] px-6 py-5 md:px-10 md:py-6">
             <h1 className="text-lg md:text-xl font-extrabold text-white">
-              Register As Donor
+              Apply for Register
             </h1>
           </div>
 
